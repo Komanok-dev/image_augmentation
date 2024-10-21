@@ -1,4 +1,4 @@
-## Image Aurmentaion
+## Image Augmentation
 
 Application for transforming images: rotating, reducing the size, and converting to grayscale
 
