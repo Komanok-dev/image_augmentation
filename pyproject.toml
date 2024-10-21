@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "image-augmentation"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.2"
+asyncpg = "^0.29.0"
+psycopg2-binary = "^2.9.9"
+pydantic-settings = "^2.5.2"
+uvicorn = "^0.31.1"
+sqlalchemy = "^2.0.35"
+alembic = "^1.13.3"
+passlib = "^1.7.4"
+python-multipart = "^0.0.12"
+pyjwt = "^2.9.0"
+pydantic = {extras = ["email"], version = "^2.9.2"}
+pillow = "^11.0.0"
+celery = "^5.4.0"
+redis = "^5.1.1"
+minio = "^7.2.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
