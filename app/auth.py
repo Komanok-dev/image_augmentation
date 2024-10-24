@@ -21,15 +21,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-def verify_password(plain_password, hashed_password):
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password):
+def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(email: str, password: str, db: Session):
+def authenticate_user(email: str, password: str, db: Session) -> User:
     user = db.query(User).filter(User.email == email).first()
     if not user:
         return False
@@ -38,7 +38,7 @@ def authenticate_user(email: str, password: str, db: Session):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta):
+def create_access_token(data: dict, expires_delta: timedelta) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
@@ -50,7 +50,7 @@ def create_access_token(data: dict, expires_delta: timedelta):
 
 async def user_authorization(
     form_data: UserLogin, session: AsyncSession = Depends(get_session)
-):
+) -> str:
     query = select(User).where(User.email == form_data.email)
     user = (await session.execute(query)).scalar_one_or_none()
     if not user or not pwd_context.verify(form_data.password, user.password):

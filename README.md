@@ -33,3 +33,33 @@ Make sure you have the following installed:
     ```
     http://localhost:8000/docs
     ```
+
+6. **Test the Application:**
+    ```
+    docker compose run app pytest
+    ```
+
+Unit tests coverage report:
+
+| Name                         | Stmts | Miss | Cover |
+|------------------------------|-------|------|-------|
+| app/__init__.py              |     0 |    0 | 100%  |
+| app/auth.py                  |    57 |    0 | 100%  |
+| app/celery.py                |     4 |    0 | 100%  |
+| app/database.py              |    25 |    0 | 100%  |
+| app/minio_client.py          |    10 |    0 | 100%  |
+| app/models.py                |    34 |    0 | 100%  |
+| app/schemas.py               |     7 |    0 | 100%  |
+| app/settings.py              |    49 |    0 | 100%  |
+| app/tasks.py                 |    51 |    0 | 100%  |
+| tests/__init__.py            |     0 |    0 | 100%  |
+| tests/conftest.py            |    57 |    0 | 100%  |
+| tests/test_auth.py           |   148 |    0 | 100%  |
+| tests/test_celery.py         |     5 |    0 | 100%  |
+| tests/test_database.py       |    43 |    0 | 100%  |
+| tests/test_minio_client.py   |    27 |    0 | 100%  |
+| tests/test_models.py         |    39 |    0 | 100%  |
+| tests/test_schemas.py        |    41 |    0 | 100%  |
+| tests/test_tasks.py          |    27 |    0 | 100%  |
+|------------------------------|-------|------|-------|
+| **TOTAL**                    |   624 |    0 | **100%** |

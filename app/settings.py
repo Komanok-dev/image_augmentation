@@ -41,30 +41,6 @@ class DatabaseSettings(BaseSettings):
         )
         return f"{driver}://{user}:{password}@{host}:{port}/{name}"
 
-    @property
-    def test_async_url(self) -> str:
-        driver, user, password, host, port, testname = (
-            self.DRIVER,
-            self.USERNAME,
-            self.PASSWORD,
-            self.HOSTNAME,
-            self.PORT,
-            self.TESTNAME,
-        )
-        return f"{driver}://{user}:{password}@{host}:{port}/{testname}"
-
-    @property
-    def test_sync_url(self) -> str:
-        syncdriver, user, password, host, port, testname = (
-            self.SYNCDRIVER,
-            self.USERNAME,
-            self.PASSWORD,
-            self.HOSTNAME,
-            self.PORT,
-            self.TESTNAME,
-        )
-        return f"{syncdriver}://{user}:{password}@{host}:{port}/{testname}"
-
 
 class MinioSettings(BaseSettings):
     model_config = SettingsConfigDict(

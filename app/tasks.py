@@ -9,18 +9,25 @@ from app.minio_client import minio_client, upload_to_minio
 from app.models import ImageTask, Stats
 
 
-def save_image_to_minio(image, format, filename, bucket_name):
-    """Helper function to save an image to MinIO and return the path."""
-    img_byte_arr = io.BytesIO()
-    image.save(img_byte_arr, format=format)
-    img_byte_arr.seek(0)
-    return upload_to_minio(img_byte_arr, filename, bucket_name=bucket_name)
-
-
 @celery_app.task(bind=True)
 def augmentation(
     self, minio_path: str, filenames: dict, user_id: str, degrees: int = 90
-):
+) -> dict:
+    """
+    Rotates, converts to grayscale, and resizes images, while measuring processing time for each operation.
+    Saves each transformed image to MinIO and records metadata in the database.
+
+    Args:
+        minio_path (str): The path to the MinIO storage where images are stored.
+        filenames (dict): A dictionary containing image filenames and their corresponding details.
+        user_id (str): The ID of the user who initiated the task.
+        degrees (int): The degree by which to rotate the images. Default is 90 degrees.
+
+    Returns:
+        dict: A dictionary containing the paths of the transformed images saved in MinIO,
+              with keys formatted as "{operation}_image_path".
+    """
+
     task_id = self.request.id
 
     with sync_sessionmaker() as session:

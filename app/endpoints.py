@@ -13,7 +13,7 @@ from app.auth import UserAuthorization, get_password_hash, user_authorization
 from app.database import DatabaseSession
 from app.minio_client import minio_client, upload_to_minio
 from app.models import ImageTask, User
-from app.schemas import UserLogin, UserRegister, UserHistory
+from app.schemas import UserLogin, UserRegister
 from app.tasks import augmentation
 
 router = APIRouter(tags=["API"])
@@ -30,8 +30,9 @@ async def register_user(
         last_name=form_data.last_name,
     )
     session.add(new_user)
-    await session.commit()
-    return await user_authorization(session=session, form_data=form_data)
+    await session.flush()
+    token = await user_authorization(session=session, form_data=form_data)
+    return token
 
 
 @router.post("/login")
@@ -44,7 +45,7 @@ async def login_user(
 @router.post("/upload")
 async def upload_images(
     user: UserAuthorization, files: List[UploadFile] = File(...)
-) -> dict:
+) -> list[dict]:
     async def handle_file(file: UploadFile):
         path = Path(file.filename)
         filename, file_extension = path.stem, path.suffix.lower().lstrip(".")
@@ -67,9 +68,16 @@ async def upload_images(
             "augmentation_task_id": augmentation_task.id,
         }
 
-    tasks = [handle_file(file) for file in files]
+    tasks = []
+    allowed_content_types = {"image/jpeg", "image/png"}
+    for file in files:
+        if file.content_type not in allowed_content_types:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid file type: {file.filename}. Only JPG and PNG files are allowed.",
+            )
+        tasks.append(handle_file(file))
     results = await asyncio.gather(*tasks)
-
     return results
 
 
@@ -106,7 +114,6 @@ async def get_task_images(
         select(ImageTask).where(ImageTask.task_id == task_id)
     )
     images = result.scalars().all()
-
     if not images:
         raise HTTPException(
             status_code=404, detail="No images found for the given task ID"
